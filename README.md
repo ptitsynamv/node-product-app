@@ -7,4 +7,4 @@
 
 ## Dependencies
 
-nodemon, express, body-parser
+nodemon, express, body-parser, ejs, pug, express-handlebars.
