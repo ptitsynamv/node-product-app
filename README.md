@@ -7,4 +7,4 @@
 
 ## Dependencies
 
-nodemon, express, body-parser, ejs, pug, express-handlebars.
+nodemon, express, body-parser, ejs, mysql2, sequelize.
