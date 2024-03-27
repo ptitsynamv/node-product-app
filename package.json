@@ -1,23 +1,26 @@
 {
   "name": "node-product-app",
   "version": "1.0.0",
-  "description": "",
+  "description": "Complete Node.js Guide",
   "main": "app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node app.js",
-    "debug": "nodemon app.js"
+    "start": "nodemon app.js",
+    "start-server": "node app.js"
   },
-  "author": "Mariia",
   "license": "ISC",
   "devDependencies": {
-    "nodemon": "^3.1.0"
+    "nodemon": "^1.18.3"
   },
   "dependencies": {
-    "body-parser": "^1.20.2",
-    "ejs": "^3.1.9",
-    "express": "^4.18.3",
-    "express-handlebars": "^7.1.2",
-    "pug": "^3.0.2"
+    "body-parser": "^1.18.3",
+    "ejs": "^2.6.1",
+    "express": "^4.16.3",
+    "express-handlebars": "^3.0.0",
+    "mongodb": "^3.1.6",
+    "mongoose": "^5.2.17",
+    "mysql2": "^1.6.1",
+    "pug": "^2.0.3",
+    "sequelize": "^5.0.0-beta.11"
   }
 }
