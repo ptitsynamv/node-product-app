@@ -14,7 +14,9 @@ exports.postLogin = (req, res, next) => {
   User.findById('id-1', (user) => {
     req.session.isAuthenticated = true;
     req.session.user = user;
-    res.redirect('/');
+    req.session.save(() => {
+      res.redirect('/');
+    });
   });
 };
 
