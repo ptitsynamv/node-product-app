@@ -5,12 +5,8 @@ const rootDir = require('../utils/path');
 const filePath = path.join(rootDir, 'data', 'cart.json');
 
 module.exports = class Cart {
-  static addProduct(id, productPrice) {
-    fs.readFile(filePath, (err, data) => {
-      let cart = { products: [], totalPrice: 0 };
-      if (!err) {
-        cart = JSON.parse(data);
-      }
+  static addProduct(id, productPrice, userId, callback) {
+    Cart.getCart((cart) => {
       const existingProductIndex = cart.products.findIndex(
         (item) => item.id === id
       );
@@ -25,37 +21,29 @@ module.exports = class Cart {
         cart.products = [...cart.products];
         cart.products[existingProductIndex] = updatedProduct;
       } else {
-        updatedProduct = { id, quantity: 1 };
+        updatedProduct = { id, quantity: 1, userId };
         cart.products = [...cart.products, updatedProduct];
       }
       cart.totalPrice += +productPrice;
 
       fs.writeFile(filePath, JSON.stringify(cart), (err) => {
-        console.log({ err });
+        callback();
       });
     });
   }
 
   static deleteProduct(id, productPrice, callback) {
-    fs.readFile(filePath, (err, data) => {
-      if (err) {
-        return;
-      }
-
-      const updatedCart = JSON.parse(data);
-
-      const product = updatedCart.products.find((item) => item.id === id);
+    Cart.getCart((cart) => {
+      const product = cart.products.find((item) => item.id === id);
       if (!product) {
         return callback();
       }
 
-      updatedCart.totalPrice =
-        updatedCart.totalPrice - productPrice * product.quantity;
-      updatedCart.products = updatedCart.products.filter(
-        (item) => item.id !== id
-      );
+      cart.totalPrice = cart.totalPrice - productPrice * product.quantity;
 
-      fs.writeFile(filePath, JSON.stringify(updatedCart), (err) => {
+      cart.products = cart.products.filter((item) => item.id !== id);
+
+      fs.writeFile(filePath, JSON.stringify(cart), (err) => {
         console.log({ err });
         callback();
       });
@@ -64,12 +52,24 @@ module.exports = class Cart {
 
   static getCart(callback) {
     fs.readFile(filePath, (err, data) => {
-      if (err) {
-        return callback(null);
+      let cart = { products: [], totalPrice: 0 };
+      if (!err) {
+        cart = JSON.parse(data);
       }
-
-      const cart = JSON.parse(data);
       callback(cart);
+    });
+  }
+
+  static clearCart(userId, callback) {
+    Cart.getCart((cart) => {
+      const updated = cart.products.filter((item) => item.userId !== userId);
+      fs.writeFile(
+        filePath,
+        JSON.stringify({ products: updated, totalPrice: 0 }),
+        (err) => {
+          callback();
+        }
+      );
     });
   }
 };

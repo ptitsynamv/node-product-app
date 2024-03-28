@@ -4,20 +4,31 @@
     "title": "Title_1",
     "imageUrl": "https://cdn.pixabay.com/photo/2024/02/28/07/42/european-shorthair-8601492_1280.jpg",
     "description": "Description_1",
-    "price": "11"
+    "price": "11",
+    "userId": "id-1"
   },
   {
     "id": "id_2",
     "title": "Title_2",
     "imageUrl": "https://cdn.pixabay.com/photo/2024/02/17/15/14/birds-8579528_1280.jpg",
     "description": "Description_2",
-    "price": "22"
+    "price": "22",
+    "userId": "id-1"
   },
   {
     "id": "id_3",
     "title": "Title_3",
-    "imageUrl": "https://cdn.pixabay.com/photo/2024/02/17/15/14/birds-8579528_1280.jpg",
+    "imageUrl": "https://cdn.pixabay.com/photo/2024/03/07/10/38/simba-8618301_960_720.jpg",
     "description": "Description_3",
-    "price": "33"
+    "price": "33",
+    "userId": "id-1"
+  },
+  {
+    "id": "0.025244897512422426",
+    "title": "Number 4",
+    "imageUrl": "https://cdn.pixabay.com/photo/2023/07/11/13/03/dachshund-8120554_1280.jpg",
+    "description": "Description 4",
+    "price": "30",
+    "userId": "id-1"
   }
 ]

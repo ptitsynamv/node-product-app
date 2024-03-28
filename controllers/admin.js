@@ -5,13 +5,20 @@ exports.getAddProduct = (req, res, next) => {
     path: '/admin/add-product',
     pageTitle: 'Add product',
     editing: false,
-    isAuthenticated: req.isLoggedIn,
+    isAuthenticated: req.session.isAuthenticated,
   });
 };
 
 exports.postAddProduct = (req, res, next) => {
   const { title, imageUrl, description, price } = req.body;
-  const product = new Product(null, title, imageUrl, description, price);
+  const product = new Product(
+    null,
+    title,
+    imageUrl,
+    description,
+    price,
+    req.user.id
+  );
   product.save();
   res.redirect('/');
 };
@@ -33,14 +40,21 @@ exports.getEditProduct = (req, res, next) => {
       pageTitle: 'Edit product',
       editing: editMode,
       product,
-      isAuthenticated: req.isLoggedIn,
+      isAuthenticated: req.session.isAuthenticated,
     });
   });
 };
 
 exports.postEditProduct = (req, res, next) => {
   const { id, title, imageUrl, description, price } = req.body;
-  const product = new Product(id, title, imageUrl, description, price);
+  const product = new Product(
+    id,
+    title,
+    imageUrl,
+    description,
+    price,
+    req.user.id
+  );
   product.save();
   res.redirect('/');
 };
@@ -59,7 +73,7 @@ exports.getProducts = (req, res, next) => {
       products,
       path: '/admin/products',
       pageTitle: 'Admin Products',
-      isAuthenticated: req.isLoggedIn,
+      isAuthenticated: req.session.isAuthenticated,
     });
   });
 };

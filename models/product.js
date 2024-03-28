@@ -6,12 +6,13 @@ const Cart = require('./cart');
 const filePath = path.join(rootDir, 'data', 'products.json');
 
 module.exports = class Product {
-  constructor(id, title, imageUrl, description, price) {
+  constructor(id, title, imageUrl, description, price, userId) {
     this.id = id;
     this.title = title;
     this.imageUrl = imageUrl;
     this.description = description;
     this.price = price;
+    this.userId = userId;
   }
 
   save() {

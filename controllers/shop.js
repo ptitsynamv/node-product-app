@@ -7,7 +7,7 @@ exports.getProducts = (req, res, next) => {
       products,
       path: '/products',
       pageTitle: 'All products',
-      isAuthenticated: req.isLoggedIn,
+      isAuthenticated: req.session.isAuthenticated,
     });
   });
 };
@@ -20,7 +20,7 @@ exports.getProduct = (req, res, next) => {
       product,
       path: '/product',
       pageTitle: `Product ${product.title}`,
-      isAuthenticated: req.isLoggedIn,
+      isAuthenticated: req.session.isAuthenticated,
     });
   });
 };
@@ -31,7 +31,7 @@ exports.getIndex = (req, res, next) => {
       products,
       path: '/',
       pageTitle: 'Shop',
-      isAuthenticated: req.isLoggedIn,
+      isAuthenticated: req.session.isAuthenticated,
     });
   });
 };
@@ -54,7 +54,7 @@ exports.getCart = (req, res, next) => {
         path: '/cart',
         pageTitle: 'Cart',
         products: cartProducts,
-        isAuthenticated: req.isLoggedIn,
+        isAuthenticated: req.session.isAuthenticated,
       });
     });
   });
@@ -63,9 +63,10 @@ exports.getCart = (req, res, next) => {
 exports.postCart = (req, res, next) => {
   const { productId } = req.body;
   Product.findById(productId, (product) => {
-    Cart.addProduct(productId, product.price);
+    Cart.addProduct(productId, product.price, req.user.id, () => {
+      res.redirect('/cart');
+    });
   });
-  res.redirect('/cart');
 };
 
 exports.postCartDeleteItem = (req, res, next) => {
@@ -79,17 +80,18 @@ exports.postCartDeleteItem = (req, res, next) => {
 };
 
 exports.getOrders = (req, res, next) => {
-  res.render('shop/orders', {
-    path: '/orders',
-    pageTitle: 'Orders',
-    isAuthenticated: req.isLoggedIn,
+  req.user.getOrdersFromFile((orders) => {
+    res.render('shop/orders', {
+      path: '/orders',
+      pageTitle: 'Your Orders',
+      orders,
+      isAuthenticated: req.session.isAuthenticated,
+    });
   });
 };
 
-exports.getCheckout = (req, res, next) => {
-  res.render('shop/checkout', {
-    path: '/checkout',
-    pageTitle: 'Checkout',
-    isAuthenticated: req.isLoggedIn,
+exports.postOrder = (req, res, next) => {
+  req.user.createOrder((order) => {
+    res.redirect('/orders');
   });
 };
