@@ -3,6 +3,7 @@ const bodyParser = require('body-parser');
 const path = require('path');
 const session = require('express-session');
 const fileStore = require('session-file-store')(session);
+const csurf = require('csurf');
 
 const adminRoutes = require('./routes/admin');
 const shopRoutes = require('./routes/shop');
@@ -11,6 +12,8 @@ const { get404 } = require('./controllers/error');
 const User = require('./models/user');
 
 const app = express();
+
+const csurfProtection = csurf();
 
 app.set('view engine', 'ejs');
 app.set('views', 'views');
@@ -25,6 +28,7 @@ app.use(
     store: new fileStore({ path: './data/sessions' }),
   })
 );
+app.use(csurfProtection);
 
 app.use((req, res, next) => {
   if (req.session.user) {
@@ -35,6 +39,12 @@ app.use((req, res, next) => {
   } else {
     next();
   }
+});
+
+app.use((req, res, next) => {
+  res.locals.isAuthenticated = req.session.isAuthenticated;
+  res.locals.csrfToken = req.csrfToken();
+  next();
 });
 
 app.use('/admin', adminRoutes);
