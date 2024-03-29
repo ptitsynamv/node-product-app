@@ -14,9 +14,37 @@ module.exports = class User {
     this.password = password;
   }
 
+  save(callback) {
+    getUsersFromFile((users) => {
+      fs.writeFile(
+        filePath,
+        JSON.stringify([
+          ...users,
+          {
+            id: Math.random().toString(),
+            email: this.email,
+            password: this.password,
+          },
+        ]),
+        (err) => {
+          if (!err) {
+            callback();
+          }
+        }
+      );
+    });
+  }
+
   static findById(id, callback) {
     getUsersFromFile((users) => {
       const user = users.find((item) => item.id === id);
+      callback(user);
+    });
+  }
+
+  static findByEmail(email, callback) {
+    getUsersFromFile((users) => {
+      const user = users.find((item) => item.email === email);
       callback(user);
     });
   }
