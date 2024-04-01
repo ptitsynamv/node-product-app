@@ -15,13 +15,9 @@ exports.getLogin = (req, res, next) => {
 exports.postLogin = (req, res, next) => {
   const { email, password } = req.body;
 
-  req.flash('error', 'Invalid email or password.');
-  return res.redirect('/login');
-
   User.findByEmail(email, (user) => {
     if (!user) {
-      req.flash('error', 'Invalid email');
-      console.log('HERE');
+      req.flash('error', 'Invalid email or password.');
       return res.redirect('/login');
     }
 
