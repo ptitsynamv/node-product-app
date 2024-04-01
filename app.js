@@ -4,6 +4,7 @@ const path = require('path');
 const session = require('express-session');
 const fileStore = require('session-file-store')(session);
 const csurf = require('csurf');
+const flash = require('connect-flash');
 
 const adminRoutes = require('./routes/admin');
 const shopRoutes = require('./routes/shop');
@@ -18,17 +19,18 @@ const csurfProtection = csurf();
 app.set('view engine', 'ejs');
 app.set('views', 'views');
 
-app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, 'public')));
+app.use(bodyParser.urlencoded({ extended: false }));
 app.use(
   session({
     secret: 'my-secret',
     resave: false,
     saveUninitialized: false,
-    store: new fileStore({ path: './data/sessions' }),
+    store: new fileStore({ path: './data/sessions' }), // doesnt work with connect-flash
   })
 );
 app.use(csurfProtection);
+app.use(flash());
 
 app.use((req, res, next) => {
   if (req.session.user) {
