@@ -29,6 +29,7 @@ exports.postLogin = (req, res, next) => {
           return res.redirect('/');
         });
       }
+      req.flash('error', 'Invalid email or password.');
       res.redirect('/login');
     });
   });
@@ -41,10 +42,13 @@ exports.postLogout = (req, res, next) => {
 };
 
 exports.getSignup = (req, res, next) => {
+  const [errorMessage] = req.flash('error');
+
   res.render('auth/signup', {
     path: '/signup',
     pageTitle: 'Signup',
     isAuthenticated: false,
+    errorMessage,
   });
 };
 
@@ -53,6 +57,7 @@ exports.postSignup = (req, res, next) => {
 
   User.findByEmail(email, (user) => {
     if (user) {
+      req.flash('error', 'Email exists');
       return res.redirect('/signup');
     }
     bcryptjs.hash(password, 12).then((hashedPassword) => {
