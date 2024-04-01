@@ -8,30 +8,42 @@ const filePath = path.join(rootDir, 'data', 'users.json');
 const ordersFilePath = path.join(rootDir, 'data', 'orders.json');
 
 module.exports = class User {
-  constructor({ id, email, password }) {
+  constructor({ id, email, password, resetToken, resetTokenExpiration }) {
     this.id = id;
     this.email = email;
     this.password = password;
+    this.resetToken = resetToken;
+    this.resetTokenExpiration = resetTokenExpiration;
   }
 
   save(callback) {
     getUsersFromFile((users) => {
-      fs.writeFile(
-        filePath,
-        JSON.stringify([
-          ...users,
-          {
-            id: Math.random().toString(),
-            email: this.email,
-            password: this.password,
-          },
-        ]),
-        (err) => {
-          if (!err) {
-            callback();
-          }
+      const updatedUsers = [...users];
+      const existedIndex = users.findIndex((item) => item.id === this.id);
+
+      if (existedIndex >= 0) {
+        updatedUsers[existedIndex] = {
+          id: this.id,
+          email: this.email,
+          password: this.password,
+          resetToken: this.resetToken,
+          resetTokenExpiration: this.resetTokenExpiration,
+        };
+      } else {
+        updatedUsers.push({
+          id: Math.random().toString(),
+          email: this.email,
+          password: this.password,
+          resetToken: this.resetToken,
+          resetTokenExpiration: this.resetTokenExpiration,
+        });
+      }
+
+      fs.writeFile(filePath, JSON.stringify(updatedUsers), (err) => {
+        if (!err) {
+          callback();
         }
-      );
+      });
     });
   }
 

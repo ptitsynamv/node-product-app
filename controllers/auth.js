@@ -1,4 +1,5 @@
 const bcryptjs = require('bcryptjs');
+const crypto = require('crypto');
 
 const User = require('../models/user');
 
@@ -63,6 +64,49 @@ exports.postSignup = (req, res, next) => {
     bcryptjs.hash(password, 12).then((hashedPassword) => {
       new User({ email, password: hashedPassword }).save(() => {
         res.redirect('/login');
+      });
+    });
+  });
+};
+
+exports.getReset = (req, res, next) => {
+  const [errorMessage] = req.flash('error');
+
+  res.render('auth/reset', {
+    path: '/reset',
+    pageTitle: 'Reset password',
+    isAuthenticated: false,
+    errorMessage,
+  });
+};
+
+exports.postReset = (req, res, next) => {
+  const { email } = req.body;
+
+  crypto.randomBytes(32, (err, buffer) => {
+    if (err) {
+      req.flash('error', 'Crypto error');
+      return res.redirect('/reset');
+    }
+
+    const resetToken = buffer.toString('hex');
+    User.findByEmail(email, (user) => {
+      if (!user) {
+        req.flash('error', 'There is no user');
+        return res.redirect('/reset');
+      }
+      new User({
+        ...user,
+        resetToken,
+        resetTokenExpiration: new Date() + 3600000,
+      }).save(() => {
+        // TODO: send email to user with resetToken
+        res.render('auth/fake-email', {
+          path: '/fake-email',
+          pageTitle: 'Fake Email',
+          isAuthenticated: false,
+          resetToken,
+        });
       });
     });
   });

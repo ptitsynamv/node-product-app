@@ -1,0 +1,14 @@
+<%- include('../includes/head.ejs') %>
+</head>
+
+<body>
+   <%- include('../includes/navigation.ejs') %>
+
+    <main>
+     <div class="centered">
+      <h2>Fake email message</h2>
+      <p>You requested a password reset</p>
+      <p>Click this <a href="http://localhost:3000/reset/<%= resetToken %>">link</a> to set a new password</p>
+     </div>
+    </main>
+<%- include('../includes/end.ejs') %>
