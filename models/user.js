@@ -61,6 +61,13 @@ module.exports = class User {
     });
   }
 
+  static findByResetToken(resetToken, callback) {
+    getUsersFromFile((users) => {
+      const user = users.find((item) => item.resetToken === resetToken);
+      callback(user);
+    });
+  }
+
   createOrder(callback) {
     this.getCartInfo((productsInfo) => {
       const order = { id: Math.random().toString(), products: productsInfo };

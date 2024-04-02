@@ -98,7 +98,7 @@ exports.postReset = (req, res, next) => {
       new User({
         ...user,
         resetToken,
-        resetTokenExpiration: new Date() + 3600000,
+        resetTokenExpiration: Date.now() + 3600000,
       }).save(() => {
         // TODO: send email to user with resetToken
         res.render('auth/fake-email', {
@@ -109,5 +109,51 @@ exports.postReset = (req, res, next) => {
         });
       });
     });
+  });
+};
+
+exports.getNewPassword = (req, res, next) => {
+  const [errorMessage] = req.flash('error');
+  const { token } = req.params;
+
+  User.findByResetToken(token, (user) => {
+    if (user && user.resetTokenExpiration > Date.now()) {
+      return res.render('auth/new-password', {
+        path: '/new-password',
+        pageTitle: 'New password',
+        isAuthenticated: false,
+        errorMessage,
+        userId: user.id,
+        token,
+      });
+    }
+    req.flash('error', 'There is no user');
+    return res.redirect('/reset');
+  });
+};
+
+exports.postNewPassword = (req, res, next) => {
+  const { password, userId, token } = req.body;
+
+  User.findById(userId, (user) => {
+    if (
+      user &&
+      user.resetTokenExpiration > Date.now() &&
+      token === user.resetToken
+    ) {
+      return bcryptjs.hash(password, 12).then((hashedPassword) => {
+        new User({
+          ...user,
+          resetToken: null,
+          resetTokenExpiration: null,
+          password: hashedPassword,
+        }).save(() => {
+          return res.redirect('/login');
+        });
+      });
+    }
+
+    req.flash('error', 'There is no user');
+    return res.redirect('/reset');
   });
 };
