@@ -1,5 +1,6 @@
 const bcryptjs = require('bcryptjs');
 const crypto = require('crypto');
+const { validationResult } = require('express-validator');
 
 const User = require('../models/user');
 
@@ -55,6 +56,20 @@ exports.getSignup = (req, res, next) => {
 
 exports.postSignup = (req, res, next) => {
   const { email, password, confirmPassword } = req.body;
+  const errors = validationResult(req);
+  console.log({ errors: errors.array() });
+
+  if (!errors.isEmpty()) {
+    return res.status(422).render('auth/signup', {
+      path: '/signup',
+      pageTitle: 'Signup',
+      isAuthenticated: false,
+      errorMessage: errors
+        .array()
+        .map((item) => item.msg)
+        .join(','),
+    });
+  }
 
   User.findByEmail(email, (user) => {
     if (user) {

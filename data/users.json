@@ -1,14 +1,14 @@
 [
   {
     "id": "userId_1",
-    "email": "email.email@com",
+    "email": "mail@mail.com",
     "password": "$2a$12$zjeFWPMLPQA9ywWp2YDJ3O7Yoa5ZD750W/Nn.kqry1oCvZmlz1vJW",
     "resetToken": null,
     "resetTokenExpiration": null
   },
   {
     "id": "userId_2",
-    "email": "email2.email@com",
+    "email": "mail@mail.com",
     "password": "$2a$12$zjeFWPMLPQA9ywWp2YDJ3O7Yoa5ZD750W/Nn.kqry1oCvZmlz1vJW",
     "resetToken": null,
     "resetTokenExpiration": null

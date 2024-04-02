@@ -7,4 +7,4 @@
 
 ## Dependencies
 
-nodemon, express, body-parser, ejs, pug, express-handlebars, express-session, session-file-store, bcryptjs, csurf, connect-flash.
+nodemon, express, body-parser, ejs, pug, express-handlebars, express-session, session-file-store, bcryptjs, csurf, connect-flash, express-validator.
