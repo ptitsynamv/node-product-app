@@ -45,28 +45,40 @@ exports.getEditProduct = (req, res, next) => {
 
 exports.postEditProduct = (req, res, next) => {
   const { id, title, imageUrl, description, price } = req.body;
-  const product = new Product(
-    id,
-    title,
-    imageUrl,
-    description,
-    price,
-    req.user.id
-  );
-  product.save();
-  res.redirect('/');
+
+  Product.findById(id, (product) => {
+    if (product.userId !== req.user.id) {
+      return res.redirect('/');
+    }
+
+    const updatedProduct = new Product(
+      id,
+      title,
+      imageUrl,
+      description,
+      price,
+      req.user.id
+    );
+    updatedProduct.save();
+    res.redirect('/');
+  });
 };
 
 exports.postDeleteProduct = (req, res, next) => {
   const { id } = req.body;
 
-  Product.deleteById(id, () => {
-    res.redirect('/admin/products');
+  Product.findById(id, (product) => {
+    if (product.userId !== req.user.id) {
+      return res.redirect('/');
+    }
+    Product.deleteById(id, () => {
+      res.redirect('/admin/products');
+    });
   });
 };
 
 exports.getProducts = (req, res, next) => {
-  Product.fetchAll((products) => {
+  Product.fetchAllByUserId(req.user.id, (products) => {
     res.render('admin/products', {
       products,
       path: '/admin/products',
