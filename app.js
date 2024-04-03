@@ -26,7 +26,7 @@ app.use(
     secret: 'my-secret',
     resave: false,
     saveUninitialized: false,
-    // store: new fileStore({ path: './data/sessions' }), // doesnt work with connect-flash
+    store: new fileStore({ path: './data/sessions' }), // doesnt work with connect-flash
   })
 );
 app.use(csurfProtection);
