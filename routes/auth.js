@@ -10,7 +10,7 @@ router.post(
   '/login',
   [
     check('email').isEmail().withMessage('Invalid email').normalizeEmail(),
-    body('password', 'Invalid password').isLength({ min: 5, max: 10 }).trim(),
+    body('password', 'Invalid password').isLength({ min: 1, max: 10 }).trim(),
   ],
   authController.postLogin
 );
@@ -24,7 +24,7 @@ router.post(
   [
     check('email').isEmail().withMessage('Invalid email').normalizeEmail(),
     body('password', 'Invalid password')
-      .isLength({ min: 5, max: 10 })
+      .isLength({ min: 1, max: 10 })
       .isAlphanumeric()
       .trim(),
     body('confirmPassword')
