@@ -11,16 +11,42 @@ exports.getLogin = (req, res, next) => {
     path: '/login',
     pageTitle: 'Login',
     errorMessage,
+    oldInput: { email: '', password: '' },
+    validationErrors: [],
   });
 };
 
 exports.postLogin = (req, res, next) => {
   const { email, password } = req.body;
 
+  const errors = validationResult(req);
+
+  console.log({ array: errors.array() });
+
+  if (!errors.isEmpty()) {
+    return res.status(422).render('auth/login', {
+      path: '/login',
+      pageTitle: 'Login',
+      isAuthenticated: false,
+      errorMessage: errors
+        .array()
+        .map((item) => item.msg)
+        .join(','),
+      oldInput: { email, password },
+      validationErrors: errors.array(),
+    });
+  }
+
   User.findByEmail(email, (user) => {
     if (!user) {
-      req.flash('error', 'Invalid email or password.');
-      return res.redirect('/login');
+      return res.status(422).render('auth/login', {
+        path: '/login',
+        pageTitle: 'Login',
+        isAuthenticated: false,
+        errorMessage: 'Invalid email or password.',
+        oldInput: { email, password },
+        validationErrors: [{ path: 'email', path: 'password' }],
+      });
     }
 
     bcryptjs.compare(password, user.password).then((doMatch) => {
@@ -31,8 +57,14 @@ exports.postLogin = (req, res, next) => {
           return res.redirect('/');
         });
       }
-      req.flash('error', 'Invalid email or password.');
-      res.redirect('/login');
+      return res.status(422).render('auth/login', {
+        path: '/login',
+        pageTitle: 'Login',
+        isAuthenticated: false,
+        errorMessage: 'Invalid email or password.',
+        oldInput: { email, password },
+        validationErrors: [{ path: 'email', path: 'password' }],
+      });
     });
   });
 };
@@ -51,13 +83,14 @@ exports.getSignup = (req, res, next) => {
     pageTitle: 'Signup',
     isAuthenticated: false,
     errorMessage,
+    oldInput: { email: '', password: '', confirmPassword: '' },
+    validationErrors: [],
   });
 };
 
 exports.postSignup = (req, res, next) => {
   const { email, password, confirmPassword } = req.body;
   const errors = validationResult(req);
-  console.log({ errors: errors.array() });
 
   if (!errors.isEmpty()) {
     return res.status(422).render('auth/signup', {
@@ -68,6 +101,8 @@ exports.postSignup = (req, res, next) => {
         .array()
         .map((item) => item.msg)
         .join(','),
+      oldInput: { email, password, confirmPassword },
+      validationErrors: errors.array(),
     });
   }
 

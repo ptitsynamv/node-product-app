@@ -6,7 +6,14 @@ const router = express.Router();
 
 router.get('/login', authController.getLogin);
 
-router.post('/login', authController.postLogin);
+router.post(
+  '/login',
+  [
+    check('email').isEmail().withMessage('Invalid email').normalizeEmail(),
+    body('password', 'Invalid password').isLength({ min: 5, max: 10 }).trim(),
+  ],
+  authController.postLogin
+);
 
 router.post('/logout', authController.postLogout);
 
@@ -15,16 +22,19 @@ router.get('/signup', authController.getSignup);
 router.post(
   '/signup',
   [
-    check('email').isEmail().withMessage('Invalid email'),
+    check('email').isEmail().withMessage('Invalid email').normalizeEmail(),
     body('password', 'Invalid password')
       .isLength({ min: 5, max: 10 })
-      .isAlphanumeric(),
-    body('confirmPassword').custom((value, { req }) => {
-      if (value !== req.body.password) {
-        throw new Error('Passwords have to match');
-      }
-      return true;
-    }),
+      .isAlphanumeric()
+      .trim(),
+    body('confirmPassword')
+      .custom((value, { req }) => {
+        if (value !== req.body.password) {
+          throw new Error('Passwords have to match');
+        }
+        return true;
+      })
+      .trim(),
   ],
   authController.postSignup
 );
