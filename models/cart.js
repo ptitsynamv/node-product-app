@@ -27,6 +27,9 @@ module.exports = class Cart {
       cart.totalPrice += +productPrice;
 
       fs.writeFile(filePath, JSON.stringify(cart), (err) => {
+        if (err) {
+          throw new Error(err);
+        }
         callback();
       });
     });
@@ -44,7 +47,9 @@ module.exports = class Cart {
       cart.products = cart.products.filter((item) => item.id !== id);
 
       fs.writeFile(filePath, JSON.stringify(cart), (err) => {
-        console.log({ err });
+        if (err) {
+          throw new Error(err);
+        }
         callback();
       });
     });
@@ -53,9 +58,10 @@ module.exports = class Cart {
   static getCart(callback) {
     fs.readFile(filePath, (err, data) => {
       let cart = { products: [], totalPrice: 0 };
-      if (!err) {
-        cart = JSON.parse(data);
+      if (err) {
+        throw new Error(err);
       }
+      cart = JSON.parse(data);
       callback(cart);
     });
   }
@@ -67,7 +73,9 @@ module.exports = class Cart {
         filePath,
         JSON.stringify({ products: updated, totalPrice: 0 }),
         (err) => {
-          callback();
+          if (err) {
+            throw new Error(err);
+          }
         }
       );
     });

@@ -32,16 +32,22 @@ exports.postAddProduct = (req, res, next) => {
     });
   }
 
-  const product = new Product(
-    null,
-    title,
-    imageUrl,
-    description,
-    price,
-    req.user.id
-  );
-  product.save();
-  res.redirect('/');
+  try {
+    const product = new Product(
+      null,
+      title,
+      imageUrl,
+      description,
+      price,
+      req.user.id
+    );
+    product.save();
+  } catch (err) {
+    const error = new Error(err);
+    error.httpStatusCode = 500;
+    return next(error);
+  }
+  res.redirect('/admin/products');
 };
 
 exports.getEditProduct = (req, res, next) => {
@@ -102,7 +108,7 @@ exports.postEditProduct = (req, res, next) => {
       req.user.id
     );
     updatedProduct.save();
-    res.redirect('/');
+    res.redirect('/admin/products');
   });
 };
 

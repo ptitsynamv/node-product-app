@@ -36,7 +36,7 @@ app.use((req, res, next) => {
   if (req.session.user) {
     User.findById(req.session.user.id, (user) => {
       if (!user) {
-        return res.redirect('/500');
+        return next();
       }
       req.user = new User({ ...user });
       return next();
@@ -58,5 +58,9 @@ app.use(authRoutes);
 
 app.get('/500', get500);
 app.use(get404);
+
+app.use((error, req, res, next) => {
+  res.redirect('/500');
+});
 
 app.listen(3000);

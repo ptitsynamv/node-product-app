@@ -40,9 +40,10 @@ module.exports = class User {
       }
 
       fs.writeFile(filePath, JSON.stringify(updatedUsers), (err) => {
-        if (!err) {
-          callback();
+        if (err) {
+          throw new Error(err);
         }
+        callback();
       });
     });
   }
@@ -77,11 +78,12 @@ module.exports = class User {
           ordersFilePath,
           JSON.stringify([...orders, order]),
           (err) => {
-            if (!err) {
-              Cart.clearCart(this.id, () => {
-                callback(order);
-              });
+            if (err) {
+              throw new Error(err);
             }
+            Cart.clearCart(this.id, () => {
+              callback(order);
+            });
           }
         );
       });
@@ -105,7 +107,7 @@ module.exports = class User {
   getOrdersFromFile(callback) {
     fs.readFile(ordersFilePath, (err, data) => {
       if (err) {
-        return callback([]);
+        throw new Error(err);
       }
       callback(JSON.parse(data));
     });
@@ -115,7 +117,7 @@ module.exports = class User {
 const getUsersFromFile = (callback) => {
   fs.readFile(filePath, (err, data) => {
     if (err) {
-      return callback([]);
+      throw new Error(err);
     }
     callback(JSON.parse(data));
   });

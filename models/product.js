@@ -30,7 +30,9 @@ module.exports = class Product {
       }
 
       fs.writeFile(filePath, JSON.stringify(updatedProducts), (err) => {
-        console.log({ err });
+        if (err) {
+          throw new Error(err);
+        }
       });
     });
   }
@@ -58,10 +60,10 @@ module.exports = class Product {
       const updatedProducts = [...products].filter((item) => item.id !== id);
 
       fs.writeFile(filePath, JSON.stringify(updatedProducts), (err) => {
-        if (!err) {
-          Cart.deleteProduct(id, product.price, callback);
+        if (err) {
+          throw new Error(err);
         }
-        console.log({ err });
+        Cart.deleteProduct(id, product.price, callback);
       });
     });
   }
@@ -70,7 +72,7 @@ module.exports = class Product {
 const getProductsFromFile = (callback) => {
   fs.readFile(filePath, (err, data) => {
     if (err) {
-      return callback([]);
+      throw new Error(err);
     }
     callback(JSON.parse(data));
   });
