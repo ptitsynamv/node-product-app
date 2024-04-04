@@ -9,7 +9,7 @@ const flash = require('connect-flash');
 const adminRoutes = require('./routes/admin');
 const shopRoutes = require('./routes/shop');
 const authRoutes = require('./routes/auth');
-const { get404 } = require('./controllers/error');
+const { get404, get500 } = require('./controllers/error');
 const User = require('./models/user');
 
 const app = express();
@@ -35,8 +35,11 @@ app.use(flash());
 app.use((req, res, next) => {
   if (req.session.user) {
     User.findById(req.session.user.id, (user) => {
+      if (!user) {
+        return res.redirect('/500');
+      }
       req.user = new User({ ...user });
-      next();
+      return next();
     });
   } else {
     next();
@@ -53,6 +56,7 @@ app.use('/admin', adminRoutes);
 app.use(shopRoutes);
 app.use(authRoutes);
 
+app.get('/500', get500);
 app.use(get404);
 
 app.listen(3000);

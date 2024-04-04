@@ -19,7 +19,7 @@ exports.postAddProduct = (req, res, next) => {
 
   if (!errors.isEmpty()) {
     return res.status(422).render('admin/edit-product', {
-      path: '/admin/edit-product',
+      path: '/admin/add-product',
       pageTitle: 'Add product',
       editing: false,
       product: { title, imageUrl, description, price },
