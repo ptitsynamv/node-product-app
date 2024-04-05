@@ -12,7 +12,6 @@ router.post(
   '/add-product',
   [
     body('title', 'Invalid title').isString().isLength({ min: 3 }).trim(),
-    body('imageUrl', 'Invalid imageUrl').isURL(),
     body('price', 'Invalid price').isFloat(),
     body('description', 'Invalid description')
       .isLength({ min: 3, max: 200 })
@@ -30,7 +29,6 @@ router.post(
   '/edit-product',
   [
     body('title', 'Invalid title').isString().isLength({ min: 3 }).trim(),
-    body('imageUrl', 'Invalid imageUrl').isURL(),
     body('price', 'Invalid price').isFloat(),
     body('description', 'Invalid description')
       .isLength({ min: 3, max: 200 })

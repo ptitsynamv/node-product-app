@@ -5,6 +5,7 @@ const session = require('express-session');
 const fileStore = require('session-file-store')(session);
 const csurf = require('csurf');
 const flash = require('connect-flash');
+const multer = require('multer');
 
 const adminRoutes = require('./routes/admin');
 const shopRoutes = require('./routes/shop');
@@ -15,12 +16,31 @@ const User = require('./models/user');
 const app = express();
 
 const csurfProtection = csurf();
+const fileStorage = multer.diskStorage({
+  destination: function (req, file, callback) {
+    callback(null, './images');
+  },
+  filename: function (req, file, callback) {
+    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
+    callback(null, uniqueSuffix + '-' + file.originalname);
+  },
+});
+
+const fileFilter = (req, file, callback) => {
+  callback(
+    null,
+    file.mimetype === 'image/png' ||
+      file.mimetype === 'image/jpg' ||
+      file.mimetype === 'image/jpeg'
+  );
+};
 
 app.set('view engine', 'ejs');
 app.set('views', 'views');
 
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(bodyParser.urlencoded({ extended: false }));
+app.use(multer({ storage: fileStorage, fileFilter }).single('image'));
 app.use(
   session({
     secret: 'my-secret',
@@ -60,6 +80,7 @@ app.get('/500', get500);
 app.use(get404);
 
 app.use((error, req, res, next) => {
+  console.log({ error });
   res.redirect('/500');
 });
 

@@ -14,7 +14,21 @@ exports.getAddProduct = (req, res, next) => {
 };
 
 exports.postAddProduct = (req, res, next) => {
-  const { title, imageUrl, description, price } = req.body;
+  const { title, description, price } = req.body;
+  const { file } = req;
+  if (!file) {
+    return res.status(422).render('admin/edit-product', {
+      path: '/admin/add-product',
+      pageTitle: 'Add product',
+      editing: false,
+      product: { title, description, price },
+      hasError: true,
+      errorMessage: ['File is not an image'],
+      validationErrors: [],
+    });
+  }
+  console.log({ file });
+
   const errors = validationResult(req);
 
   if (!errors.isEmpty()) {
@@ -22,7 +36,7 @@ exports.postAddProduct = (req, res, next) => {
       path: '/admin/add-product',
       pageTitle: 'Add product',
       editing: false,
-      product: { title, imageUrl, description, price },
+      product: { title, description, price },
       hasError: true,
       errorMessage: errors
         .array()
@@ -31,6 +45,8 @@ exports.postAddProduct = (req, res, next) => {
       validationErrors: errors.array(),
     });
   }
+
+  const imageUrl = file.path;
 
   try {
     const product = new Product(
@@ -75,7 +91,8 @@ exports.getEditProduct = (req, res, next) => {
 };
 
 exports.postEditProduct = (req, res, next) => {
-  const { id, title, imageUrl, description, price } = req.body;
+  const { id, title, description, price } = req.body;
+  const { file } = req;
 
   const errors = validationResult(req);
 
@@ -84,7 +101,7 @@ exports.postEditProduct = (req, res, next) => {
       path: '/admin/edit-product',
       pageTitle: 'Edit product',
       editing: true,
-      product: { id, title, imageUrl, description, price },
+      product: { id, title, description, price },
       hasError: true,
       errorMessage: errors
         .array()
@@ -102,7 +119,7 @@ exports.postEditProduct = (req, res, next) => {
     const updatedProduct = new Product(
       id,
       title,
-      imageUrl,
+      file ? file.path : product.imageUrl,
       description,
       price,
       req.user.id
