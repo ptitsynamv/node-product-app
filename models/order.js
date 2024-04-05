@@ -61,4 +61,11 @@ module.exports = class Order {
       callback(orders.filter((order) => order.user.id === userId));
     });
   }
+
+  static findById(id, callback) {
+    Order.getOrdersFromFile((orders) => {
+      const order = orders.find((item) => item.id === id);
+      callback(order);
+    });
+  }
 };
