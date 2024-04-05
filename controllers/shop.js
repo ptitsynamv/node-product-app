@@ -1,5 +1,10 @@
+const fs = require('fs');
+const path = require('path');
+const rootDir = require('../utils/path');
+
 const Product = require('../models/product');
 const Cart = require('../models/cart');
+const Order = require('../models/order');
 
 exports.getProducts = (req, res, next) => {
   Product.fetchAll((products) => {
@@ -76,7 +81,9 @@ exports.postCartDeleteItem = (req, res, next) => {
 };
 
 exports.getOrders = (req, res, next) => {
-  req.user.getOrdersFromFile((orders) => {
+  const { id } = req.user;
+
+  Order.getUserOrdersFromFile(id, (orders) => {
     res.render('shop/orders', {
       path: '/orders',
       pageTitle: 'Your Orders',
@@ -86,7 +93,28 @@ exports.getOrders = (req, res, next) => {
 };
 
 exports.postOrder = (req, res, next) => {
-  req.user.createOrder((order) => {
+  const { id, email } = req.user;
+
+  Order.createOrder({ id, email }, (order) => {
     res.redirect('/orders');
+  });
+};
+
+exports.getInvoice = (req, res, next) => {
+  const { orderId } = req.params;
+
+  const invoiceName = `invoice-${orderId}.pdf`;
+
+  const invoicePath = path.join('data', 'invoices', invoiceName);
+  fs.readFile(invoicePath, (err, data) => {
+    if (err) {
+      return next(err);
+    }
+    res.setHeader('Content-Type', 'application/pdf');
+    res.setHeader(
+      'Content-Disposition',
+      `attachment; filename="${invoiceName}.pdf"`
+    );
+    res.send(data);
   });
 };

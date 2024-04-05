@@ -8,7 +8,7 @@
   },
   {
     "id": "userId_2",
-    "email": "mail@mail.com",
+    "email": "mail2@mail.com",
     "password": "$2a$12$zjeFWPMLPQA9ywWp2YDJ3O7Yoa5ZD750W/Nn.kqry1oCvZmlz1vJW",
     "resetToken": null,
     "resetTokenExpiration": null

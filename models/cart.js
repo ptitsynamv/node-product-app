@@ -59,6 +59,7 @@ module.exports = class Cart {
     fs.readFile(filePath, (err, data) => {
       let cart = { products: [], totalPrice: 0 };
       if (err) {
+        console.log({ err });
         throw new Error(err);
       }
       cart = JSON.parse(data);
@@ -76,6 +77,7 @@ module.exports = class Cart {
           if (err) {
             throw new Error(err);
           }
+          callback();
         }
       );
     });

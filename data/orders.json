@@ -1,1 +1,26 @@
-[{"id":"0.2688378146923034","products":[{"id":"id_1","title":"Title_1","imageUrl":"https://cdn.pixabay.com/photo/2024/02/28/07/42/european-shorthair-8601492_1280.jpg","description":"Description_1","price":"11","userId":"id-1","quantity":1},{"id":"id_2","title":"Title_2","imageUrl":"https://cdn.pixabay.com/photo/2024/02/17/15/14/birds-8579528_1280.jpg","description":"Description_2","price":"22","userId":"id-1","quantity":1}]},{"id":"0.7656666153097191","products":[{"id":"id_2","title":"Title_2","imageUrl":"https://cdn.pixabay.com/photo/2024/02/17/15/14/birds-8579528_1280.jpg","description":"Description_2","price":"22","userId":"id-1","quantity":3}]},{"id":"0.0064067095888686865","products":[{"id":"0.025244897512422426","title":"Number 4","imageUrl":"https://cdn.pixabay.com/photo/2023/07/11/13/03/dachshund-8120554_1280.jpg","description":"Description 4","price":"30","userId":"id-1","quantity":1}]}]
+[
+  {
+    "id": "0.5504416417773355",
+    "user": { "id": "userId_1", "email": "mail@mail.com" },
+    "products": [
+      {
+        "id": "id_2",
+        "title": "Title_2",
+        "imageUrl": "images\\1712300625048-122671926-cat-8031938_640.jpg",
+        "description": "Description_2 v2",
+        "price": "22",
+        "userId": "userId_1",
+        "quantity": 1
+      },
+      {
+        "id": "0.025244897512422426",
+        "title": "Title_4",
+        "imageUrl": "images\\1712300730037-307035463-zoo-8378189_640.jpg",
+        "description": "Description_4",
+        "price": "30",
+        "userId": "userId_2",
+        "quantity": 1
+      }
+    ]
+  }
+]
