@@ -6,12 +6,17 @@ const Product = require('../models/product');
 const Cart = require('../models/cart');
 const Order = require('../models/order');
 
+const ITEMS_PER_PAGE = 2;
+
 exports.getProducts = (req, res, next) => {
+  const page = +req.query.page || 1;
+
   Product.fetchAll((products) => {
     res.render('shop/product-list', {
-      products,
+      products: getItemsForPage(products, page),
       path: '/products',
       pageTitle: 'All products',
+      ...getPaginationData(page, products.length),
     });
   });
 };
@@ -29,11 +34,14 @@ exports.getProduct = (req, res, next) => {
 };
 
 exports.getIndex = (req, res, next) => {
+  const page = +req.query.page || 1;
+
   Product.fetchAll((products) => {
     res.render('shop/index', {
-      products,
+      products: getItemsForPage(products, page),
       path: '/',
       pageTitle: 'Shop',
+      ...getPaginationData(page, products.length),
     });
   });
 };
@@ -160,3 +168,20 @@ exports.getInvoice = (req, res, next) => {
     pdfDoc.end();
   });
 };
+
+function getPaginationData(page, totalItems) {
+  return {
+    currentPage: page,
+    hasNextPage: ITEMS_PER_PAGE * page < totalItems,
+    hasPrevPage: page > 1,
+    nextPage: page + 1,
+    prevPage: page - 1,
+    lastPage: Math.ceil(totalItems / ITEMS_PER_PAGE),
+  };
+}
+
+function getItemsForPage(items, page) {
+  const skip = (page - 1) * ITEMS_PER_PAGE;
+  const limit = ITEMS_PER_PAGE;
+  return items.slice(skip, skip + limit);
+}
