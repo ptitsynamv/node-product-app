@@ -1,6 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 const PDFDocument = require('pdfkit');
+// const stripe = require('stripe')('stripeId');
 
 const Product = require('../models/product');
 const Cart = require('../models/cart');
@@ -96,6 +97,48 @@ exports.getOrders = (req, res, next) => {
       path: '/orders',
       pageTitle: 'Your Orders',
       orders,
+    });
+  });
+};
+
+exports.getCheckout = (req, res, next) => {
+  Cart.getCart((cart) => {
+    Product.fetchAll((products) => {
+      const cartProducts = products.reduce((prev, item) => {
+        const cartProduct = cart.products.find((prod) => prod.id === item.id);
+        if (cartProduct) {
+          prev.push({
+            productData: item,
+            quantity: cartProduct.quantity,
+          });
+        }
+        return prev;
+      }, []);
+
+      // stripe.checkout.sessions.create({
+      //   payment_method_types: ['card'],
+      //   line_items: cartProducts.map((product) => {
+      //     return {
+      //       name: product.productData.title,
+      //       description: product.productData.description,
+      //       amount: product.productData.price * 100,
+      //       currency: 'usd',
+      //       quantity: product.quantity
+      //     };
+      //   }),
+      //   success_url: req.protocol + '://' + req.get('host') + '/checkout/success', // => http://localhost:3000
+      //   cancel_url: req.protocol + '://' + req.get('host') + '/checkout/cancel'
+      // });
+
+      res.render('shop/checkout', {
+        path: '/checkout',
+        pageTitle: 'Checkout',
+        products: cartProducts,
+        totalSum: cartProducts.reduce((sum, cartProduct) => {
+          return sum + cartProduct.productData.price * cartProduct.quantity;
+        }, 0),
+        sessionId: 'session.id',
+      });
     });
   });
 };
