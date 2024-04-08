@@ -136,16 +136,16 @@ exports.postEditProduct = (req, res, next) => {
   });
 };
 
-exports.postDeleteProduct = (req, res, next) => {
-  const { id } = req.body;
+exports.deleteProduct = (req, res, next) => {
+  const { id } = req.params;
 
   Product.findById(id, (product) => {
     if (product.userId !== req.user.id) {
-      return res.redirect('/');
+      return res.status(500).json({ message: 'Error' });
     }
     Product.deleteById(id, () => {
       deleteFile(product.imageUrl);
-      res.redirect('/admin/products');
+      res.status(200).json({ message: 'Success' });
     });
   });
 };
